@@ -168,6 +168,14 @@ export interface TweaksConfig {
    */
   useFiletypeExtractorFallbackForHls?: boolean;
   /**
+   * If enabled, the player will retry a DRM license renewal when it fails once.
+   * This can help recover from transient network or license server issues during DRM session renewal.
+   * Default is false.
+   *
+   * @platform Android
+   */
+  enableDrmLicenseRenewRetry?: boolean;
+  /**
    * Determines whether `AVKit` should update Now Playing information automatically when using System UI.
    *
    * - If set to `false`, the automatic updates of Now Playing Info sent by `AVKit` are disabled.

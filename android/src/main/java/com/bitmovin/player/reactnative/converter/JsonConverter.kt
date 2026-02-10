@@ -209,6 +209,7 @@ fun ReadableMap.toTweaksConfig(): TweaksConfig = TweaksConfig().apply {
     withBoolean("useDrmSessionForClearPeriods") { useDrmSessionForClearPeriods = it }
     withBoolean("useDrmSessionForClearSources") { useDrmSessionForClearSources = it }
     withBoolean("useFiletypeExtractorFallbackForHls") { useFiletypeExtractorFallbackForHls = it }
+    withBoolean("enableDrmLicenseRenewRetry") { enableDrmLicenseRenewRetry = it }
     withStringArray("forceReuseVideoCodecReasons") {
         forceReuseVideoCodecReasons = it
             .filterNotNull()
