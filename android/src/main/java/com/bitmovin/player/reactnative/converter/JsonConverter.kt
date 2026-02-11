@@ -188,33 +188,42 @@ private fun String.toForceReuseVideoCodecReason(): ForceReuseVideoCodecReason? =
 /**
  * Converts any JS object into a `TweaksConfig` object.
  */
-fun ReadableMap.toTweaksConfig(): TweaksConfig = TweaksConfig().apply {
-    withDouble("timeChangedInterval") { timeChangedInterval = it }
-    withInt("bandwidthEstimateWeightLimit") {
-        bandwidthMeterType = BandwidthMeterType.Default(
-            bandwidthEstimateWeightLimit = it,
-        )
+fun ReadableMap.toTweaksConfig(): TweaksConfig {
+    val enableRenewRetry = getBooleanOrNull("enableDrmLicenseRenewRetry")
+    val cfg = if (enableRenewRetry != null) {
+        // enableDrmLicenseRenewRetry is a read-only (val) property in the SDK and must be set via constructor
+        TweaksConfig(enableDrmLicenseRenewRetry = enableRenewRetry)
+    } else {
+        TweaksConfig()
     }
-    withMap("devicesThatRequireSurfaceWorkaround") { devices ->
-        val deviceNames = devices.withStringArray("deviceNames") {
-            it.filterNotNull().map(::DeviceName)
-        } ?: emptyList()
-        val modelNames = devices.withStringArray("modelNames") {
-            it.filterNotNull().map(::DeviceName)
-        } ?: emptyList()
-        devicesThatRequireSurfaceWorkaround = deviceNames + modelNames
-    }
-    withBoolean("languagePropertyNormalization") { languagePropertyNormalization = it }
-    withDouble("localDynamicDashWindowUpdateInterval") { localDynamicDashWindowUpdateInterval = it }
-    withBoolean("useDrmSessionForClearPeriods") { useDrmSessionForClearPeriods = it }
-    withBoolean("useDrmSessionForClearSources") { useDrmSessionForClearSources = it }
-    withBoolean("useFiletypeExtractorFallbackForHls") { useFiletypeExtractorFallbackForHls = it }
-    withBoolean("enableDrmLicenseRenewRetry") { enableDrmLicenseRenewRetry = it }
-    withStringArray("forceReuseVideoCodecReasons") {
-        forceReuseVideoCodecReasons = it
-            .filterNotNull()
-            .mapNotNull(String::toForceReuseVideoCodecReason)
-            .toSet()
+    return cfg.apply {
+        withDouble("timeChangedInterval") { timeChangedInterval = it }
+        withInt("bandwidthEstimateWeightLimit") {
+            bandwidthMeterType = BandwidthMeterType.Default(
+                bandwidthEstimateWeightLimit = it,
+            )
+        }
+        withMap("devicesThatRequireSurfaceWorkaround") { devices ->
+            val deviceNames = devices.withStringArray("deviceNames") {
+                it.filterNotNull().map(::DeviceName)
+            } ?: emptyList()
+            val modelNames = devices.withStringArray("modelNames") {
+                it.filterNotNull().map(::DeviceName)
+            } ?: emptyList()
+            devicesThatRequireSurfaceWorkaround = deviceNames + modelNames
+        }
+        withBoolean("languagePropertyNormalization") { languagePropertyNormalization = it }
+        withDouble("localDynamicDashWindowUpdateInterval") { localDynamicDashWindowUpdateInterval = it }
+        withBoolean("useDrmSessionForClearPeriods") { useDrmSessionForClearPeriods = it }
+        withBoolean("useDrmSessionForClearSources") { useDrmSessionForClearSources = it }
+        withBoolean("useFiletypeExtractorFallbackForHls") { useFiletypeExtractorFallbackForHls = it }
+        // Do not set enableDrmLicenseRenewRetry here as it's read-only; it was set via constructor above
+        withStringArray("forceReuseVideoCodecReasons") {
+            forceReuseVideoCodecReasons = it
+                .filterNotNull()
+                .mapNotNull(String::toForceReuseVideoCodecReason)
+                .toSet()
+        }
     }
 }
 
